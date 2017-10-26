@@ -23,8 +23,8 @@ def CanalBSC(vetorEntrada, p):
     
     return vetorSaida,quantMuda
 
-vetorEntrada = bitarray(10)
-print("vetorEntrada: ",vetorEntrada,"vetorSaida: ",CanalBSC(vetorEntrada,0.5))
+#vetorEntrada = bitarray(10)
+#print("vetorEntrada: ",vetorEntrada,"vetorSaida: ",CanalBSC(vetorEntrada,0.5))
 
 def codificadorHamming(vetorEntrada):
     
@@ -38,10 +38,10 @@ def codificadorHamming(vetorEntrada):
         
     return saida
 
-vetorEntrada = random.randint(0,2,4)
-print("VetorEntrada: ",vetorEntrada)
-vetorCodificado = codificadorHamming(vetorEntrada)
-print("vetor codificado: ", vetorCodificado)
+#vetorEntrada = random.randint(0,2,4)
+#print("VetorEntrada: ",vetorEntrada)
+#vetorCodificado = codificadorHamming(vetorEntrada)
+#print("vetor codificado: ", vetorCodificado)
 
 def calculaSindrome(r):
     
@@ -83,10 +83,10 @@ def decodificadorHamming(r):
         saida[i] %=2
     return saida
 
-r,quantMudado = CanalBSC(vetorCodificado,0.2)
-print("VEtor recebido: ", r)
-estimativa = decodificadorHamming(r)
-print("Vetor estimativa do transmitido: ", estimativa)
+#r,quantMudado = CanalBSC(vetorCodificado,0.2)
+#print("VEtor recebido: ", r)
+#estimativa = decodificadorHamming(r)
+#print("Vetor estimativa do transmitido: ", estimativa)
 
 def RandomNumberGenerator(quantVetores):
     
@@ -95,10 +95,10 @@ def RandomNumberGenerator(quantVetores):
     for i in range(quantVetores):
         dic[i] = random.randint(0,2,4)
     return dic
-quantVetores = int(pow(10,6)/4)
-dic = RandomNumberGenerator(quantVetores)
-print("Dic: ", len(dic))
-filename = "amostraOriginal.txt"
+#quantVetores = int(pow(10,6)/4)
+#dic = RandomNumberGenerator(quantVetores)
+#print("Dic: ", len(dic))
+#filename = "amostraOriginal.txt"
 
 
 def writeFile(filename,dic):
@@ -123,12 +123,12 @@ def PassarNoCanalBSC(dic,p):
       quantMudado +=mudou
       
     return resposta,quantMudado
-p=0.5
-amostraAlterada,quantMudado = PassarNoCanalBSC(dic,p)
-print("Tamanho amostra Alterada: ", len(amostraAlterada))
-print("Quantidade de bits mudado: ",quantMudado)
-print("Porcentagem de erro sem codificacao: ",quantMudado/pow(10,6))
-filename = "amostraAlterada.txt"
+#p=0.5
+#amostraAlterada,quantMudado = PassarNoCanalBSC(dic,p)
+#print("Tamanho amostra Alterada: ", len(amostraAlterada))
+#print("Quantidade de bits mudado: ",quantMudado)
+#print("Porcentagem de erro sem codificacao: ",quantMudado/pow(10,6))
+#filename = "amostraAlterada.txt"
 #writeFile(filename,amostraAlterada)
 def PassarNoCodificador(dic):
     
@@ -138,15 +138,15 @@ def PassarNoCodificador(dic):
         amostraCodificada[key] = codificadorHamming(dic.get(key))
     return amostraCodificada
 
-amostraCodificada = PassarNoCodificador(dic)
-print("Tamanho amostra Codificada: ",len(amostraCodificada))
-p=0.5
-amostraCodificadaAlterada,quantMudado = PassarNoCanalBSC(amostraCodificada,p)
-print("Tamanho amostra Alterada: ", len(amostraCodificadaAlterada))
-print("Quantidade de bits mudado: ",quantMudado)
-print("Porcentagem de erro com codificacao: ",quantMudado/(250*pow(10,3)*7))
+#amostraCodificada = PassarNoCodificador(dic)
+#print("Tamanho amostra Codificada: ",len(amostraCodificada))
+#p=0.5
+#amostraCodificadaAlterada,quantMudado = PassarNoCanalBSC(amostraCodificada,p)
+#print("Tamanho amostra Alterada: ", len(amostraCodificadaAlterada))
+#print("Quantidade de bits mudado: ",quantMudado)
+#print("Porcentagem de erro com codificacao: ",quantMudado/(250*pow(10,3)*7))
 
-def PassarNoCodificador(dic):
+def PassarNoDeCodificador(dic):
     
     amostraDecodificada = {}
     for key in dic:
@@ -154,8 +154,8 @@ def PassarNoCodificador(dic):
         amostraDecodificada[key] = decodificadorHamming(dic.get(key))
     return  amostraDecodificada
 
-amostraDecodificada = PassarNoCodificador(amostraCodificadaAlterada)
-print("Tamanho amostra Decodificada: ",len(amostraDecodificada))
+#amostraDecodificada = PassarNoDeCodificador(amostraCodificadaAlterada)
+#print("Tamanho amostra Decodificada: ",len(amostraDecodificada))
 
 def ContarErros(decodificada,original):
     
@@ -166,6 +166,33 @@ def ContarErros(decodificada,original):
                 quantErro +=1
     return quantErro
 
-quantErro = ContarErros(amostraDecodificada,amostraCodificada)
-print("Quantidade de erro: ",quantErro)
-print("Porcentagem de erro: ",quantErro/pow(10,6))
+#quantErro = ContarErros(amostraDecodificada,amostraCodificada)
+#print("Quantidade de erro: ",quantErro)
+#print("Porcentagem de erro: ",quantErro/pow(10,6))
+Pe ={} #probabilidade de erro depois de decodificado
+Ps = {} # probabilidade de erro sem codificar
+Pc = {} # probabilidade de erro com codificacao
+milhaobits = pow(10,6)
+for i in range(10):
+    quantVetores = int(pow(10,6)/4)
+    dic = RandomNumberGenerator(quantVetores)
+    p=0.5
+    amostraAlterada,quantMudado = PassarNoCanalBSC(dic,p)
+    Ps[i] = quantMudado/milhaobits
+    amostraCodificada = PassarNoCodificador(dic)
+    amostraCodificadaAlterada,quantMudado = PassarNoCanalBSC(amostraCodificada,p)
+    Pc[i] = quantMudado/(250000*7)
+    amostraDecodificada = PassarNoDeCodificador(amostraCodificadaAlterada)
+    quantErro = ContarErros(amostraDecodificada,amostraCodificada)
+    Pe[i] = quantErro/milhaobits
+
+Psmedia =0
+Pcmedia =0
+Pemedia =0
+for i in range(10):
+  Psmedia += Ps.get(i)
+  Pcmedia += Pc.get(i)
+  Pemedia += Pe.get(i)  
+
+print("Probabilidade de erro: ",Pemedia/10,"\nProbabilidade de erro sem codificacao: ",Psmedia/10)
+print("Probabilidade de erro com codificacao: ", Pcmedia/10)
