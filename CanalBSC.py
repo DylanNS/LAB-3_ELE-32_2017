@@ -140,11 +140,11 @@ def PassarNoCodificador(dic):
 
 amostraCodificada = PassarNoCodificador(dic)
 print("Tamanho amostra Codificada: ",len(amostraCodificada))
-p=0.2
+p=0.5
 amostraCodificadaAlterada,quantMudado = PassarNoCanalBSC(amostraCodificada,p)
 print("Tamanho amostra Alterada: ", len(amostraCodificadaAlterada))
 print("Quantidade de bits mudado: ",quantMudado)
-print("Porcentagem de erro com codificacao: ",quantMudado/pow(10,6))
+print("Porcentagem de erro com codificacao: ",quantMudado/(250*pow(10,3)*7))
 
 def PassarNoCodificador(dic):
     
@@ -161,7 +161,7 @@ def ContarErros(decodificada,original):
     
     quantErro =0
     for i in range(len(original)):
-        for j in range(len(original.get(1))):
+        for j in range(4):
             if(not decodificada[i][j] == original[i][j]):
                 quantErro +=1
     return quantErro
@@ -169,4 +169,3 @@ def ContarErros(decodificada,original):
 quantErro = ContarErros(amostraDecodificada,amostraCodificada)
 print("Quantidade de erro: ",quantErro)
 print("Porcentagem de erro: ",quantErro/pow(10,6))
-print("Porcentagem de erro corrigido: ", (quantMudado-quantErro)/quantMudado)
