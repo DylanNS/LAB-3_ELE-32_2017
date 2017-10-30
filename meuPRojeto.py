@@ -20,24 +20,24 @@ def CanalBSC(vetorEntrada, p):
     for pos in posicao:
         vetorSaida[pos] ^= True
     
-    return vetorSaida
+    return vetorSaida,quantMuda
 
 #vetorEntrada = bitarray(10)
 #print("vetorEntrada: ",vetorEntrada,"vetorSaida: ",CanalBSC(vetorEntrada,0.5))
 
 def codificadorHamming(vetorEntrada):
     
-    g1 =  array([1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1])
-    g2 =  array([0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,0])
-    g3 =  array([0,0,1,0,0,0,0,0,0,0,0,0,1,1,0,1])
-    g4 =  array([0,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0])
-    g5 =  array([0,0,0,0,1,0,0,0,0,0,0,0,1,0,1,1])
-    g6 =  array([0,0,0,0,0,1,0,0,0,0,0,0,1,0,1,0])
-    g7 =  array([0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1])
-    g8 =  array([0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1])
-    g9 =  array([0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0])
-    g10 = array([0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1])
-    g11 = array([0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1])
+    g1 =  array([1,0,0,0,0,0,0,0,0,0,0,1,1,1,1])
+    g2 =  array([0,1,0,0,0,0,0,0,0,0,0,1,1,1,0])
+    g3 =  array([0,0,1,0,0,0,0,0,0,0,0,1,1,0,1])
+    g4 =  array([0,0,0,1,0,0,0,0,0,0,0,1,1,0,0])
+    g5 =  array([0,0,0,0,1,0,0,0,0,0,0,1,0,1,1])
+    g6 =  array([0,0,0,0,0,1,0,0,0,0,0,1,0,1,0])
+    g7 =  array([0,0,0,0,0,0,1,0,0,0,0,1,0,0,1])
+    g8 =  array([0,0,0,0,0,0,0,1,0,0,0,0,1,1,1])
+    g9 =  array([0,0,0,0,0,0,0,0,1,0,0,0,1,1,0])
+    g10 = array([0,0,0,0,0,0,0,0,0,1,0,0,1,0,1])
+    g11 = array([0,0,0,0,0,0,0,0,0,0,1,0,0,1,1])
     
     G = array([g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,g11])
     saida = vetorEntrada.dot(G)
@@ -48,10 +48,10 @@ def codificadorHamming(vetorEntrada):
         
     return saida
 
-vetorEntrada = random.randint(0,2,11)
-print("VetorEntrada: ",vetorEntrada)
-vetorCodificado = codificadorHamming(vetorEntrada)
-print("vetor codificado: ", vetorCodificado)
+#vetorEntrada = random.randint(0,2,11)
+#print("VetorEntrada: ",vetorEntrada)
+#vetorCodificado = codificadorHamming(vetorEntrada)
+#print("vetor codificado: ", vetorCodificado)
 
 def calculaSindrome(r):
     
@@ -126,7 +126,7 @@ def MapErro(s):
     elif(array_equal(s,h15)):
         e[14] = 1
     else:
-        return array([1,0,0,0,0,0,0])
+        return e
     return e
 def decodificadorHamming(r):
     
@@ -140,3 +140,83 @@ def decodificadorHamming(r):
         
         saida[i] %=2
     return saida
+
+#------------------------------------------------------------------------------
+#Funcoes para coleta de dados
+#------------------------------------------------------------------------------
+    
+def RandomNumberGenerator(quantVetores):
+    
+    dic = {} #guarda array que tem 0 e 1
+    #comeca em zero e vai ate 10^6/4 -1
+    for i in range(quantVetores):
+        dic[i] = random.randint(0,2,11)
+    return dic
+def PassarNoCanalBSC(dic,p):
+    
+    resposta = {}
+    quantMudado = 0
+    for key in dic:
+        
+      resposta[key],mudou = CanalBSC(dic.get(key),p)
+      quantMudado +=mudou
+      
+    return resposta,quantMudado
+
+def PassarNoCodificador(dic):
+    
+    amostraCodificada = {}
+    for key in dic:
+        
+        amostraCodificada[key] = codificadorHamming(dic.get(key))
+    return amostraCodificada
+
+def PassarNoDeCodificador(dic):
+    
+    amostraDecodificada = {}
+    for key in dic:
+        
+        amostraDecodificada[key] = decodificadorHamming(dic.get(key))
+    return  amostraDecodificada
+
+def ContarErros(decodificada,original):
+    
+    quantErro =0
+    for i in range(len(original)):
+        for j in range(11):
+            if(not decodificada[i][j] == original[i][j]):
+                quantErro +=1
+    return quantErro
+
+#------------------------------------------------------------------------------
+#Coleta de dados
+
+Pe ={} #probabilidade de erro depois de decodificado
+Ps = {} # probabilidade de erro sem codificar
+Pc = {} # probabilidade de erro com codificacao
+milhaobits = pow(10,6)
+p=0.5
+totalerro = 0
+for i in range(10):
+    quantVetores = int(250000)
+    dic = RandomNumberGenerator(quantVetores)
+    amostraAlterada,quantMudado = PassarNoCanalBSC(dic,p)
+    Ps[i] = quantMudado/(250000*11)
+    amostraCodificada = PassarNoCodificador(dic)
+    amostraCodificadaAlterada,quantMudado = PassarNoCanalBSC(amostraCodificada,p)
+    Pc[i] = quantMudado/(250000*15)
+    amostraDecodificada = PassarNoDeCodificador(amostraCodificadaAlterada)
+    quantErro = ContarErros(amostraDecodificada,amostraCodificada)
+    Pe[i] = quantErro/(250000*11)
+    totalerro +=quantErro
+Psmedia =0
+Pcmedia =0
+Pemedia =0
+for i in range(10):
+  Psmedia += Ps.get(i)
+  Pcmedia += Pc.get(i)
+  Pemedia += Pe.get(i)  
+print("p = ",p)
+print("Probabilidade de erro: ",(Pemedia/10),"\nProbabilidade de erro sem codificacao: ",Psmedia/10)
+print("Probabilidade de erro com codificacao: ", Pcmedia/10)
+print("QUantidade de erro: ",totalerro)
