@@ -1,0 +1,84 @@
+\documentclass[journal,comsoc]{IEEEtran}
+
+\usepackage[T1]{fontenc}% optional T1 font encoding
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage[portuguese]{babel}
+\selectlanguage{portuguese}
+
+%\usepackage{hyperref}
+
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+
+\begin{document}
+	
+	\title{Codificação de Canal}
+	
+	\author{Dylan Sugimoto, Ivan Padalko}
+	
+	% The paper headers
+	\markboth{Relatório da disciplina ELE-32}{}
+	
+	% make the title area
+	\maketitle
+	
+	\begin{abstract}
+		Desenvolveu-se um programa que simula a transmissão de uma mensagem por um canal binário simétrico (\emph{Binary Symmetric Channel}, BSC). Foi estudado a influência da codificação de Hamming (nas versões 4/7 e 11/15) na redução de erros de transmissão para este canal. Propõe-se um modelo alternativo para a codificação do canal buscando a correção de erros duplos.
+	\end{abstract}
+	
+	\section{Introdução}
+		% The very first letter is a 2 line initial drop letter followed
+		% by the rest of the first word in caps.
+	
+		\IEEEPARstart{D}{urante} a transmissão de uma mensagem por um canal não ideal, a presença de ruídos ou outras imperfeições podem alterar os sinais recebidos e, consequentemente, o conteúdo da mensagem transmitida. No caso de estarmos transmitindo uma sequência de bits, o erro da mensagem pode ser visto como a alteração de um dos bits da mensagem, ie, a recepção de um bit diferente do transmitido.
+	
+		Para se estudar possíveis codificações de canais, é preciso modelar de alguma forma o canal que está sendo usado e a forma em que a mensagem será transmitida. Desta forma, escolheu-se que o modelo usado seria a transmissão de uma mensagem binária (uma sequência de bits) através de um canal simétrico, ou seja, a probabilidade de um bit ser trocado é independente dos outros bits.
+		
+		A forma mais simples de se reduzir a probabilidade de erro é o uso de bits repetidos, ou seja, cada bit é transmitido $N$ vezes e, no momento da recepção, assume-se que o bit transmitido é o mais frequente. Porém, da mesma forma que esta codificação é simples, ela também é ineficiente sendo necessário transmitir uma mensagem $N$ vezes maior do que a mensagem de fato. 
+		
+		Outra forma de se reduzir o erro é o uso de bits de verificação para os bits transmitidos, ie, bits redundantes que permitem, até um certo ponto, a recuperação da mensagem transmitida em caso de um erro. Um desses métodos é o chamado código de Hamming que transmite, além dos bits que de fato compõem a mensagem, bits de paridade (ie, a aplicação de \textsc{xor} entre múltiplos bits). Um exemplo é a codificação que transmite para cada 4 bits de informação, 3 bits de paridade. Desta forma, a mensagem transmitida é dada pela multiplicação módulo 2 do vetor de bits $v$ pela matriz $G$, definida pela equação \ref{eq:HammingG}
+		
+		\begin{equation}
+			G = \begin{bmatrix}
+					1 & 0 & 0 & 0 & 1 & 1 & 1 \\
+					0 & 1 & 0 & 0 & 1 & 0 & 1 \\
+					0 & 0 & 1 & 0 & 1 & 1 & 0 \\
+					0 & 0 & 0 & 1 & 0 & 1 & 1
+				\end{bmatrix}
+			\label{eq:HammingG}
+		\end{equation} 
+		
+		Após a transmissão, pode-se multiplicar o vetor recebido pela matriz $H$, definida pela equação \ref{eq:HammingH}, e obter um vetor chamado síndrome. Caso este vetor seja nulo, assume-se que a mensagem foi transmitida corretamente. Caso contrário, este vetor indica uma quais bits podem ter sido trocados durante a transmissão e, decide-se, pelo erro de um bit que, ao ser adicionado ao vetor mensagem, geraria esta síndrome.
+		
+		\begin{equation}
+			H = \begin{bmatrix}
+					1 & 1 & 1 \\
+					1 & 0 & 1 \\
+					1 & 1 & 0 \\
+					0 & 1 & 1 \\
+					1 & 0 & 0 \\
+					0 & 1 & 0 \\
+					0 & 0 & 1 
+				\end{bmatrix}
+			\label{eq:HammingH}
+		\end{equation} 
+		
+		De uma forma semelhante, pode-se definir as matrizes $G$ e $H$ para outros tamanhos de mensagem com quantidades diferentes de bits de verificação, por exemplo, 11 bits de mensagem para 4 bits de verificação que foi implementado nesta simulação. De um modo geral, pode-se definir codificações com $2^N-1$ bits no total com $N$ bits de verificação.
+	
+	\section{Descrição do algoritmo}
+	
+	\section{Resultados}
+	
+	\section{Discussão}
+	
+	\section{Conclusão}
+	
+	\appendices
+	\section{Código fonte do programa}
+	O código fonte e os textos utilizados estão disponíveis \href{https://github.com/DylanNS/LAB-3_ELE-32_2017}{neste repositório do github.}
+	
+\end{document}
+
+
